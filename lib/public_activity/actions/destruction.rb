@@ -4,7 +4,7 @@ module PublicActivity
     extend ActiveSupport::Concern
 
     included do
-      after_destroy :activity_on_destroy
+      after_commit :activity_on_destroy, on: :destroy
     end
 
     private
