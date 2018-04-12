@@ -8,18 +8,19 @@ module PublicActivity
       class Activity
         include ::Mongoid::Document
         include ::Mongoid::Timestamps
-        include ::Mongoid::Attributes::Dynamic if (::Mongoid::VERSION =~ /^4/) == 0
+        include ::Mongoid::Attributes::Dynamic
         include Renderable
-
-        # Define polymorphic association to the parent
-        belongs_to :trackable,  polymorphic: true
-        # Define ownership to a resource responsible for this activity
-        belongs_to :owner,      polymorphic: true
-        # Define ownership to a resource targeted by this activity
-        belongs_to :recipient,  polymorphic: true
 
         field :key,         type: String
         field :parameters,  type: Hash
+
+        def user
+          User.find_by(id: self.user_id) if self.user_id
+        end
+
+        def trackable
+          self.trackable_type.constantize.find_by(id: self.trackable_id)
+        end
       end
     end
   end
